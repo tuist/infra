@@ -3,7 +3,7 @@ package controller
 import (
 	"context"
 
-	kubeboxv1alpha1 "github.com/tuist/kubebox/api/v1alpha1"
+	kubeboxv1 "github.com/tuist/kubebox/api/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -17,7 +17,7 @@ type ProviderMachineReconciler struct {
 func (r *ProviderMachineReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := ctrl.LoggerFrom(ctx).WithValues("providerMachine", req.NamespacedName)
 
-	var machine kubeboxv1alpha1.ProviderMachine
+	var machine kubeboxv1.ProviderMachine
 	if err := r.Get(ctx, req.NamespacedName, &machine); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
@@ -28,8 +28,7 @@ func (r *ProviderMachineReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 
 func (r *ProviderMachineReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&kubeboxv1alpha1.ProviderMachine{}).
+		For(&kubeboxv1.ProviderMachine{}).
 		Named("provider-machine").
 		Complete(r)
 }
-

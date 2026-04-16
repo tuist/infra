@@ -1,4 +1,4 @@
-package v1alpha1
+package v1
 
 import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	SchemeGroupVersion = schema.GroupVersion{Group: "kubebox.dev", Version: "v1alpha1"}
+	SchemeGroupVersion = schema.GroupVersion{Group: "kubebox.dev", Version: "v1"}
 	SchemeBuilder      = &scheme.Builder{GroupVersion: SchemeGroupVersion}
 	AddToScheme        = SchemeBuilder.AddToScheme
 )
@@ -31,4 +31,3 @@ func init() {
 		&SandboxList{},
 	)
 }
-

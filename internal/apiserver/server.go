@@ -24,11 +24,11 @@ func New(cfg Config) *Server {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("ready"))
 	})
-	mux.HandleFunc("/v1alpha1/info", func(w http.ResponseWriter, _ *http.Request) {
+	mux.HandleFunc("/v1/info", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"name":       "kubebox-apiserver",
-			"apiVersion": "kubebox.dev/v1alpha1",
+			"apiVersion": "kubebox.dev/v1",
 			"version":    "dev",
 		})
 	})
@@ -45,4 +45,3 @@ func New(cfg Config) *Server {
 func (s *Server) ListenAndServe() error {
 	return s.httpServer.ListenAndServe()
 }
-

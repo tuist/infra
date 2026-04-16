@@ -1,4 +1,4 @@
-package v1alpha1
+package v1
 
 import (
 	"encoding/json"
@@ -72,4 +72,3 @@ func (in *Sandbox) DeepCopyObject() runtime.Object {
 func (in *SandboxList) DeepCopyObject() runtime.Object {
 	return clone(in)
 }
-

@@ -1,4 +1,4 @@
-package v1alpha1
+package v1
 
 import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -240,4 +240,3 @@ type SandboxList struct {
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []Sandbox `json:"items"`
 }
-

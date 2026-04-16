@@ -47,7 +47,7 @@ func New(cfg Config) (*Agent, error) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("ok"))
 	})
-	mux.HandleFunc("/v1alpha1/state", func(w http.ResponseWriter, _ *http.Request) {
+	mux.HandleFunc("/v1/state", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"runtime":      rt.Name(),
@@ -108,4 +108,3 @@ func newRuntime(cfg Config) (runtimepkg.Runtime, error) {
 		return nil, fmt.Errorf("unsupported mode %q", cfg.Mode)
 	}
 }
-

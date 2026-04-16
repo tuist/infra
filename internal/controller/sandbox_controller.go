@@ -3,7 +3,7 @@ package controller
 import (
 	"context"
 
-	kubeboxv1alpha1 "github.com/tuist/kubebox/api/v1alpha1"
+	kubeboxv1 "github.com/tuist/kubebox/api/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -17,7 +17,7 @@ type SandboxReconciler struct {
 func (r *SandboxReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := ctrl.LoggerFrom(ctx).WithValues("sandbox", req.NamespacedName)
 
-	var sandbox kubeboxv1alpha1.Sandbox
+	var sandbox kubeboxv1.Sandbox
 	if err := r.Get(ctx, req.NamespacedName, &sandbox); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
@@ -28,8 +28,7 @@ func (r *SandboxReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 
 func (r *SandboxReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&kubeboxv1alpha1.Sandbox{}).
+		For(&kubeboxv1.Sandbox{}).
 		Named("sandbox").
 		Complete(r)
 }
-
