@@ -18,7 +18,7 @@ It is designed for products that need fast, isolated environments on:
 
 ## 🚧 Status
 
-Kubebox is in early bootstrap. The repository currently contains the initial project docs and design direction; the control plane and host agents have not been implemented yet.
+Kubebox is in early bootstrap. The repository currently contains the initial project docs and design direction; the control plane and host services have not been implemented yet.
 
 The first implementation will target:
 
@@ -35,7 +35,7 @@ At a high level:
 
 1. operators install Kubebox into a management Kubernetes cluster
 2. Kubebox reconciles host pools against capacity providers such as AWS, Scaleway, or self-managed bare metal
-3. host agents running on the provisioned machines register those hosts with the control plane
+3. host services running on the provisioned machines register those hosts with the control plane
 4. products request sandboxes, and Kubebox places them onto eligible hosts
 
 ## 👥 Who It Is For

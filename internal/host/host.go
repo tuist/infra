@@ -1,4 +1,4 @@
-package agent
+package host
 
 import (
 	"encoding/json"
@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/tuist/kubebox/internal/agent/local"
-	runtimepkg "github.com/tuist/kubebox/internal/agent/runtime"
+	"github.com/tuist/kubebox/internal/host/local"
+	runtimepkg "github.com/tuist/kubebox/internal/host/runtime"
 )
 
 type Config struct {

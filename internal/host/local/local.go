@@ -1,6 +1,6 @@
 package local
 
-import runtimepkg "github.com/tuist/kubebox/internal/agent/runtime"
+import runtimepkg "github.com/tuist/kubebox/internal/host/runtime"
 
 type Runtime struct {
 	hostID string
@@ -25,4 +25,3 @@ func (r *Runtime) Capabilities() runtimepkg.Capabilities {
 		SupportsShared:      false,
 	}
 }
-

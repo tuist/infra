@@ -105,8 +105,8 @@ type ProviderMachineStatus struct {
 
 // HostSpec identifies a registered machine that the scheduler can reason about.
 //
-// A Host usually appears after a ProviderMachine has booted and the host agent
-// has registered itself with the control plane.
+// A Host usually appears after a ProviderMachine has booted and the host
+// service has registered itself with the control plane.
 type HostSpec struct {
 	PoolRef            string `json:"poolRef,omitempty"`
 	ProviderMachineRef string `json:"providerMachineRef,omitempty"`

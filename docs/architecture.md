@@ -129,15 +129,15 @@ The intended flow is:
 2. the `HostPool` controller computes the required warm capacity
 3. Kubebox creates or deletes `ProviderMachine` resources
 4. provider controllers reconcile those resources against AWS, Scaleway, or Metal3
-5. provisioned machines boot and start the Kubebox host agent
-6. the host agent registers a `Host`
+5. provisioned machines boot and start the Kubebox host service
+6. the host service registers a `Host`
 7. the placement controller binds `Sandbox` resources to eligible `Host`s
 8. for dedicated placement, Kubebox creates a `HostLease`
 9. on teardown, the lease is released and the host either returns to the pool or is drained for scale-down
 
 ## Host Agents
 
-Host agents are binaries developed as part of Kubebox and installed on each bare-metal machine.
+Host services are binaries developed as part of Kubebox and installed on each bare-metal machine.
 
 They are responsible for:
 
@@ -206,7 +206,7 @@ That means:
 - a local Kubernetes cluster such as `kind`
 - the real Kubebox controllers
 - the real API server
-- a `local` host agent backend for simulated machines
+- a `local` host backend for simulated machines
 
 Backend-specific smoke tests can then be run where the host hardware allows it:
 
@@ -225,8 +225,8 @@ Backend-specific smoke tests can then be run where the host hardware allows it:
 
 ### Phase 1
 
-- implement the Linux host agent
-- implement the macOS host agent
+- implement the Linux host service
+- implement the macOS host service
 - add placement and lease handling
 - add SSH and GUI access publication
 
@@ -244,7 +244,7 @@ The design is specific enough to begin Phase 0:
 
 - the control-plane boundary is clear
 - the core resources are identified
-- the host-agent role is defined
+- the host role is defined
 - the provider-backed scaling model is defined
 
 The remaining open questions are implementation details, not blockers for starting the skeleton.
