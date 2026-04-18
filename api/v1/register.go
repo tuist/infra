@@ -14,11 +14,8 @@ var (
 	// "kubebox.tuist.dev" is the API group and "v1" is the API version.
 	SchemeGroupVersion = schema.GroupVersion{Group: "kubebox.tuist.dev", Version: "v1"}
 
-	// SchemeBuilder is a small controller-runtime helper used to register our Go
-	// structs as Kubernetes API types.
-	//
-	// The leading '&' means "take the address of this struct", so this is a
-	// pointer to one shared Builder instance rather than a copied value.
+	// SchemeBuilder is a small controller-runtime helper used to register our
+	// Kubernetes API types under this group and version.
 	SchemeBuilder      = &scheme.Builder{GroupVersion: SchemeGroupVersion}
 
 	// AddToScheme is the function the rest of the application calls when it wants
@@ -36,7 +33,7 @@ func Resource(resource string) schema.GroupResource {
 }
 
 func init() {
-	// Register tells the runtime which Go structs belong to this API version.
+	// Register tells the runtime which resource types belong to this API version.
 	//
 	// For every top-level resource Kubernetes also expects a corresponding List
 	// type for list/watch operations.
