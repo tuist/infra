@@ -1,4 +1,4 @@
-package apiserver
+package api
 
 import (
 	"encoding/json"
@@ -27,7 +27,7 @@ func New(cfg Config) *Server {
 	mux.HandleFunc("/v1/info", func(w http.ResponseWriter, _ *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
-			"name":       "kubebox-apiserver",
+			"name":       "kubebox-api",
 			"apiVersion": "kubebox.tuist.dev/v1",
 			"version":    "dev",
 		})
