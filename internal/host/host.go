@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/tuist/kubebox/internal/host/local"
@@ -13,7 +14,7 @@ import (
 type Config struct {
 	ListenAddress string
 	Mode          string
-	Backend       string
+	Backends      []string
 	HostID        string
 }
 
@@ -82,29 +83,86 @@ func newRuntime(cfg Config) (runtimepkg.Runtime, error) {
 		return &noopRuntime{
 			name: "linux",
 			capabilities: runtimepkg.Capabilities{
-				HostID:              cfg.HostID,
-				Mode:                cfg.Mode,
-				Backend:             cfg.Backend,
-				OS:                  "linux",
-				Arch:                "amd64",
-				MaxActiveVMsPerHost: 10,
-				SupportsShared:      true,
+				HostID:   cfg.HostID,
+				Mode:     cfg.Mode,
+				Backends: buildBackends(cfg.Mode, cfg.Backends),
+				OS:       "linux",
+				Arch:     "amd64",
 			},
 		}, nil
 	case "macos":
 		return &noopRuntime{
 			name: "macos",
 			capabilities: runtimepkg.Capabilities{
-				HostID:              cfg.HostID,
-				Mode:                cfg.Mode,
-				Backend:             cfg.Backend,
-				OS:                  "macos",
-				Arch:                "arm64",
-				MaxActiveVMsPerHost: 1,
-				SupportsShared:      false,
+				HostID:   cfg.HostID,
+				Mode:     cfg.Mode,
+				Backends: buildBackends(cfg.Mode, cfg.Backends),
+				OS:       "macos",
+				Arch:     "arm64",
 			},
 		}, nil
 	default:
 		return nil, fmt.Errorf("unsupported mode %q", cfg.Mode)
+	}
+}
+
+func buildBackends(mode string, backends []string) []runtimepkg.BackendCapability {
+	normalized := normalizeBackends(mode, backends)
+	capabilities := make([]runtimepkg.BackendCapability, 0, len(normalized))
+
+	for _, backend := range normalized {
+		capabilities = append(capabilities, capabilityForBackend(mode, backend))
+	}
+
+	return capabilities
+}
+
+func normalizeBackends(mode string, backends []string) []string {
+	filtered := make([]string, 0, len(backends))
+	for _, backend := range backends {
+		backend = strings.TrimSpace(backend)
+		if backend == "" {
+			continue
+		}
+		filtered = append(filtered, backend)
+	}
+
+	if len(filtered) > 0 {
+		return filtered
+	}
+
+	switch mode {
+	case "linux":
+		return []string{"cloud-hypervisor"}
+	case "macos":
+		return []string{"tart"}
+	default:
+		return []string{"local"}
+	}
+}
+
+func capabilityForBackend(mode, backend string) runtimepkg.BackendCapability {
+	switch mode {
+	case "linux":
+		return runtimepkg.BackendCapability{
+			Name:                backend,
+			GuestOSes:           []string{"linux"},
+			MaxActiveVMsPerHost: 10,
+			SupportsShared:      true,
+		}
+	case "macos":
+		return runtimepkg.BackendCapability{
+			Name:                backend,
+			GuestOSes:           []string{"linux", "macos"},
+			MaxActiveVMsPerHost: 1,
+			SupportsShared:      false,
+		}
+	default:
+		return runtimepkg.BackendCapability{
+			Name:                backend,
+			GuestOSes:           []string{"linux"},
+			MaxActiveVMsPerHost: 1,
+			SupportsShared:      false,
+		}
 	}
 }

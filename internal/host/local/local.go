@@ -16,12 +16,17 @@ func (r *Runtime) Name() string {
 
 func (r *Runtime) Capabilities() runtimepkg.Capabilities {
 	return runtimepkg.Capabilities{
-		HostID:              r.hostID,
-		Mode:                "local",
-		Backend:             "local",
-		OS:                  "local",
-		Arch:                "amd64",
-		MaxActiveVMsPerHost: 1,
-		SupportsShared:      false,
+		HostID: r.hostID,
+		Mode:   "local",
+		Backends: []runtimepkg.BackendCapability{
+			{
+				Name:                "local",
+				GuestOSes:           []string{"linux"},
+				MaxActiveVMsPerHost: 1,
+				SupportsShared:      false,
+			},
+		},
+		OS:   "local",
+		Arch: "amd64",
 	}
 }

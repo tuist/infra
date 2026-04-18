@@ -43,6 +43,17 @@ type HostPolicy struct {
 	MaxActiveVMsPerHost int32 `json:"maxActiveVMsPerHost,omitempty"`
 }
 
+// BackendCapability describes one runtime backend that a host can expose.
+//
+// A single machine may support more than one backend, and each backend may be
+// able to run different guest operating systems.
+type BackendCapability struct {
+	Name                string   `json:"name,omitempty"`
+	GuestOSes           []string `json:"guestOSes,omitempty"`
+	MaxActiveVMsPerHost int32    `json:"maxActiveVMsPerHost,omitempty"`
+	SupportsShared      bool     `json:"supportsShared,omitempty"`
+}
+
 // WarmPoolSpec defines how much idle capacity Kubebox should try to keep ready.
 type WarmPoolSpec struct {
 	MinIdleHosts int32 `json:"minIdleHosts,omitempty"`
@@ -59,27 +70,27 @@ type ScaleDownPolicy struct {
 //
 // In Kubernetes, "Spec" means "what the user wants."
 type HostPoolSpec struct {
-	Provider     ProviderRef   `json:"provider,omitempty"`
-	Backend      string        `json:"backend,omitempty"`
-	OS           string        `json:"os,omitempty"`
-	Arch         string        `json:"arch,omitempty"`
-	TenancyModes []TenancyMode `json:"tenancyModes,omitempty"`
-	HostPolicy   HostPolicy    `json:"hostPolicy,omitempty"`
-	WarmPool     WarmPoolSpec  `json:"warmPool,omitempty"`
+	Provider     ProviderRef     `json:"provider,omitempty"`
+	Backends     []string        `json:"backends,omitempty"`
+	OS           string          `json:"os,omitempty"`
+	Arch         string          `json:"arch,omitempty"`
+	TenancyModes []TenancyMode   `json:"tenancyModes,omitempty"`
+	HostPolicy   HostPolicy      `json:"hostPolicy,omitempty"`
+	WarmPool     WarmPoolSpec    `json:"warmPool,omitempty"`
 	ScaleDown    ScaleDownPolicy `json:"scaleDown,omitempty"`
-	Images       []string      `json:"images,omitempty"`
+	Images       []string        `json:"images,omitempty"`
 }
 
 // HostPoolStatus is the observed state reported by controllers.
 //
 // In Kubernetes, "Status" means "what the system believes is currently true."
 type HostPoolStatus struct {
-	Phase              Phase              `json:"phase,omitempty"`
-	DesiredHosts       int32              `json:"desiredHosts,omitempty"`
-	ReadyHosts         int32              `json:"readyHosts,omitempty"`
-	AvailableSlots     int32              `json:"availableSlots,omitempty"`
-	LastScaleTime      *metav1.Time       `json:"lastScaleTime,omitempty"`
-	Conditions         []metav1.Condition `json:"conditions,omitempty"`
+	Phase          Phase              `json:"phase,omitempty"`
+	DesiredHosts   int32              `json:"desiredHosts,omitempty"`
+	ReadyHosts     int32              `json:"readyHosts,omitempty"`
+	AvailableSlots int32              `json:"availableSlots,omitempty"`
+	LastScaleTime  *metav1.Time       `json:"lastScaleTime,omitempty"`
+	Conditions     []metav1.Condition `json:"conditions,omitempty"`
 }
 
 // ProviderMachineSpec describes one requested machine from an external provider.
@@ -108,11 +119,11 @@ type ProviderMachineStatus struct {
 // A Host usually appears after a ProviderMachine has booted and the host
 // service has registered itself with the control plane.
 type HostSpec struct {
-	PoolRef            string `json:"poolRef,omitempty"`
-	ProviderMachineRef string `json:"providerMachineRef,omitempty"`
-	Backend            string `json:"backend,omitempty"`
-	OS                 string `json:"os,omitempty"`
-	Arch               string `json:"arch,omitempty"`
+	PoolRef            string              `json:"poolRef,omitempty"`
+	ProviderMachineRef string              `json:"providerMachineRef,omitempty"`
+	Backends           []BackendCapability `json:"backends,omitempty"`
+	OS                 string              `json:"os,omitempty"`
+	Arch               string              `json:"arch,omitempty"`
 }
 
 // HostStatus describes whether the machine is healthy and how much allocatable
@@ -160,6 +171,7 @@ type AccessPolicy struct {
 // resource settings every time.
 type SandboxClassSpec struct {
 	Backend    string               `json:"backend,omitempty"`
+	GuestOS    string               `json:"guestOs,omitempty"`
 	Tenancy    TenancyMode          `json:"tenancy,omitempty"`
 	HostPolicy HostPolicy           `json:"hostPolicy,omitempty"`
 	Resources  ResourceRequirements `json:"resources,omitempty"`
@@ -182,6 +194,7 @@ type SandboxSpec struct {
 	ClassRef   string               `json:"classRef,omitempty"`
 	Image      string               `json:"image,omitempty"`
 	Backend    string               `json:"backend,omitempty"`
+	GuestOS    string               `json:"guestOs,omitempty"`
 	Tenancy    TenancyMode          `json:"tenancy,omitempty"`
 	HostPolicy HostPolicy           `json:"hostPolicy,omitempty"`
 	Resources  ResourceRequirements `json:"resources,omitempty"`
@@ -191,12 +204,12 @@ type SandboxSpec struct {
 
 // SandboxStatus reports where the sandbox landed and whether it is usable.
 type SandboxStatus struct {
-	Phase        Phase              `json:"phase,omitempty"`
-	HostRef      string             `json:"hostRef,omitempty"`
-	LeaseRef     string             `json:"leaseRef,omitempty"`
-	AccessURL    string             `json:"accessURL,omitempty"`
-	LastReadyAt  *metav1.Time       `json:"lastReadyAt,omitempty"`
-	Conditions   []metav1.Condition `json:"conditions,omitempty"`
+	Phase       Phase              `json:"phase,omitempty"`
+	HostRef     string             `json:"hostRef,omitempty"`
+	LeaseRef    string             `json:"leaseRef,omitempty"`
+	AccessURL   string             `json:"accessURL,omitempty"`
+	LastReadyAt *metav1.Time       `json:"lastReadyAt,omitempty"`
+	Conditions  []metav1.Condition `json:"conditions,omitempty"`
 }
 
 // HostPool is a Kubernetes custom resource.
