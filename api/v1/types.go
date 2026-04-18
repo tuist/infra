@@ -2,6 +2,7 @@ package v1
 
 import metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
+// TenancyMode describes whether a sandbox can share a host or must have it exclusively.
 type TenancyMode string
 
 const (
@@ -48,6 +49,9 @@ type ScaleDownPolicy struct {
 	ReleasePolicy string `json:"releasePolicy,omitempty"`
 }
 
+// HostPoolSpec is the desired state of a host pool.
+//
+// In Kubernetes, "Spec" means "what the user wants."
 type HostPoolSpec struct {
 	Provider     ProviderRef   `json:"provider,omitempty"`
 	Backend      string        `json:"backend,omitempty"`
@@ -60,6 +64,9 @@ type HostPoolSpec struct {
 	Images       []string      `json:"images,omitempty"`
 }
 
+// HostPoolStatus is the observed state reported by controllers.
+//
+// In Kubernetes, "Status" means "what the system believes is currently true."
 type HostPoolStatus struct {
 	Phase              Phase              `json:"phase,omitempty"`
 	DesiredHosts       int32              `json:"desiredHosts,omitempty"`
@@ -157,6 +164,15 @@ type SandboxStatus struct {
 	Conditions   []metav1.Condition `json:"conditions,omitempty"`
 }
 
+// HostPool is a Kubernetes custom resource.
+//
+// TypeMeta carries the API identity, like apiVersion and kind.
+// ObjectMeta carries standard Kubernetes metadata, like name, namespace, labels,
+// annotations, and resourceVersion.
+//
+// The usual pattern for Kubernetes resources is:
+//   - Spec: desired state
+//   - Status: observed state
 type HostPool struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
@@ -165,6 +181,7 @@ type HostPool struct {
 	Status HostPoolStatus `json:"status,omitempty"`
 }
 
+// HostPoolList is the list variant Kubernetes uses for list/watch operations.
 type HostPoolList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
@@ -179,6 +196,7 @@ type ProviderMachine struct {
 	Status ProviderMachineStatus `json:"status,omitempty"`
 }
 
+// ProviderMachineList is the list variant for ProviderMachine resources.
 type ProviderMachineList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
@@ -193,6 +211,7 @@ type Host struct {
 	Status HostStatus `json:"status,omitempty"`
 }
 
+// HostList is the list variant for Host resources.
 type HostList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
@@ -207,6 +226,7 @@ type HostLease struct {
 	Status HostLeaseStatus `json:"status,omitempty"`
 }
 
+// HostLeaseList is the list variant for HostLease resources.
 type HostLeaseList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
@@ -221,6 +241,7 @@ type SandboxClass struct {
 	Status SandboxClassStatus `json:"status,omitempty"`
 }
 
+// SandboxClassList is the list variant for SandboxClass resources.
 type SandboxClassList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
@@ -235,6 +256,7 @@ type Sandbox struct {
 	Status SandboxStatus `json:"status,omitempty"`
 }
 
+// SandboxList is the list variant for Sandbox resources.
 type SandboxList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
