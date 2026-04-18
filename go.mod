@@ -1,4 +1,4 @@
-module github.com/tuist/kubebox
+module github.com/tuist/infra
 
 go 1.24.0
 

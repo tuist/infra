@@ -54,7 +54,7 @@ type BackendCapability struct {
 	SupportsShared      bool     `json:"supportsShared,omitempty"`
 }
 
-// WarmPoolSpec defines how much idle capacity Kubebox should try to keep ready.
+// WarmPoolSpec defines how much idle capacity Infra should try to keep ready.
 type WarmPoolSpec struct {
 	MinIdleHosts int32 `json:"minIdleHosts,omitempty"`
 	MinIdleSlots int32 `json:"minIdleSlots,omitempty"`
@@ -95,7 +95,7 @@ type HostPoolStatus struct {
 
 // ProviderMachineSpec describes one requested machine from an external provider.
 //
-// This is the bridge between Kubebox's desired capacity and a concrete machine
+// This is the bridge between Infra's desired capacity and a concrete machine
 // requested from AWS, Scaleway, or another provider.
 type ProviderMachineSpec struct {
 	PoolRef   string      `json:"poolRef,omitempty"`
@@ -159,7 +159,7 @@ type ResourceRequirements struct {
 	DiskGB   int32 `json:"diskGb,omitempty"`
 }
 
-// AccessPolicy controls which access channels Kubebox should publish for a sandbox.
+// AccessPolicy controls which access channels Infra should publish for a sandbox.
 type AccessPolicy struct {
 	AllowSSH bool `json:"allowSSH,omitempty"`
 	AllowGUI bool `json:"allowGUI,omitempty"`
@@ -188,7 +188,7 @@ type SandboxClassStatus struct {
 // SandboxSpec is the desired state of one ephemeral VM sandbox.
 //
 // This is the main resource a product or higher-level API would create to ask
-// Kubebox for an environment.
+// Infra for an environment.
 type SandboxSpec struct {
 	Tenant     string               `json:"tenant,omitempty"`
 	ClassRef   string               `json:"classRef,omitempty"`
@@ -223,7 +223,7 @@ type SandboxStatus struct {
 //   - Status: observed state
 //
 // A HostPool declares a class of interchangeable hosts plus the warm-capacity
-// policy Kubebox should maintain for them.
+// policy Infra should maintain for them.
 type HostPool struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`

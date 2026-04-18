@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/tuist/kubebox/internal/api"
+	"github.com/tuist/infra/internal/api"
 )
 
 func main() {
@@ -14,13 +14,13 @@ func main() {
 	flag.StringVar(&listenAddress, "listen-address", ":8090", "Address for the public API server.")
 	flag.Parse()
 
-	// This server is the product-facing HTTP entrypoint for Kubebox.
-	// Clients use it to interact with Kubebox without talking to the Kubernetes
+	// This server is the product-facing HTTP entrypoint for Infra.
+	// Clients use it to interact with Infra without talking to the Kubernetes
 	// API directly.
 	server := api.New(api.Config{ListenAddress: listenAddress})
-	log.Printf("starting kubebox API server on %s", listenAddress)
+	log.Printf("starting infra API server on %s", listenAddress)
 
 	if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		log.Fatalf("kubebox API server exited with error: %v", err)
+		log.Fatalf("infra API server exited with error: %v", err)
 	}
 }

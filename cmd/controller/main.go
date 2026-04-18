@@ -4,8 +4,8 @@ import (
 	"flag"
 	"os"
 
-	"github.com/tuist/kubebox/internal/controller"
-	kubeboxscheme "github.com/tuist/kubebox/internal/scheme"
+	"github.com/tuist/infra/internal/controller"
+	infrascheme "github.com/tuist/infra/internal/scheme"
 	"k8s.io/apimachinery/pkg/runtime"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -32,14 +32,14 @@ func main() {
 	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
 
 	scheme := runtime.NewScheme()
-	utilruntime.Must(kubeboxscheme.AddToScheme(scheme))
+	utilruntime.Must(infrascheme.AddToScheme(scheme))
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
 		Metrics:                metricsserver.Options{BindAddress: metricsAddr},
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
-		LeaderElectionID:       "kubebox-controller.kubebox.tuist.dev",
+		LeaderElectionID:       "infra-controller.infra.tuist.dev",
 	})
 	if err != nil {
 		ctrl.Log.WithName("setup").Error(err, "unable to create controller manager")
@@ -71,7 +71,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	ctrl.Log.WithName("setup").Info("starting kubebox controller manager")
+	ctrl.Log.WithName("setup").Info("starting infra controller manager")
 	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
 		ctrl.Log.WithName("setup").Error(err, "controller manager exited with error")
 		os.Exit(1)

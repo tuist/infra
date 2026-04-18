@@ -3,7 +3,7 @@ package controller
 import (
 	"context"
 
-	kubeboxv1 "github.com/tuist/kubebox/api/v1"
+	infrav1 "github.com/tuist/infra/api/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -17,7 +17,7 @@ type HostPoolReconciler struct {
 func (r *HostPoolReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	log := ctrl.LoggerFrom(ctx).WithValues("hostpool", req.NamespacedName)
 
-	var pool kubeboxv1.HostPool
+	var pool infrav1.HostPool
 	if err := r.Get(ctx, req.NamespacedName, &pool); err != nil {
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
@@ -34,7 +34,7 @@ func (r *HostPoolReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 
 func (r *HostPoolReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&kubeboxv1.HostPool{}).
+		For(&infrav1.HostPool{}).
 		Named("hostpool").
 		Complete(r)
 }

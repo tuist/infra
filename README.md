@@ -1,6 +1,6 @@
-# Kubebox
+# Infra
 
-Kubebox is an open-source Kubernetes control plane for provisioning ephemeral full-VM sandbox environments on bare-metal machines.
+Infra is an open-source Kubernetes control plane for provisioning ephemeral full-VM sandbox environments on bare-metal machines.
 
 It is designed for products that need fast, isolated environments on:
 
@@ -8,7 +8,7 @@ It is designed for products that need fast, isolated environments on:
 - macOS bare metal with `tart`
 - provider-backed capacity such as AWS and Scaleway
 
-## ✨ What Kubebox Aims To Provide
+## ✨ What Infra Aims To Provide
 
 - ⚡ Warm pools of ready bare-metal hosts
 - 🧹 Ephemeral full-VM sandboxes with TTL-based cleanup
@@ -18,7 +18,7 @@ It is designed for products that need fast, isolated environments on:
 
 ## 🚧 Status
 
-Kubebox is in early bootstrap. The repository currently contains the initial project docs and design direction; the control plane and host services have not been implemented yet.
+Infra is in early bootstrap. The repository currently contains the initial project docs and design direction; the control plane and host services have not been implemented yet.
 
 The first implementation will target:
 
@@ -29,18 +29,18 @@ The first implementation will target:
 
 ## 🧭 How It Works
 
-Kubebox uses Kubernetes as the control plane, not as the sandbox runtime.
+Infra uses Kubernetes as the control plane, not as the sandbox runtime.
 
 At a high level:
 
-1. operators install Kubebox into a management Kubernetes cluster
-2. Kubebox reconciles host pools against capacity providers such as AWS, Scaleway, or self-managed bare metal
+1. operators install Infra into a management Kubernetes cluster
+2. Infra reconciles host pools against capacity providers such as AWS, Scaleway, or self-managed bare metal
 3. host services running on the provisioned machines register those hosts with the control plane
-4. products request sandboxes, and Kubebox places them onto eligible hosts
+4. products request sandboxes, and Infra places them onto eligible hosts
 
 ## 👥 Who It Is For
 
-Kubebox is meant to be infrastructure that any product can build on, including Tuist and other teams that need reproducible sandbox environments without building their own host orchestration layer.
+Infra is meant to model Tuist's infrastructure and provide a base any product can build on when it needs reproducible sandbox environments without building its own host orchestration layer.
 
 ## 📚 Documentation
 
@@ -49,4 +49,4 @@ Kubebox is meant to be infrastructure that any product can build on, including T
 
 ## 📄 License
 
-Kubebox is available under the MIT license. See [LICENSE](./LICENSE).
+Infra is available under the MIT license. See [LICENSE](./LICENSE).

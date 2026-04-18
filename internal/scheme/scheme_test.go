@@ -3,20 +3,20 @@ package scheme
 import (
 	"testing"
 
-	kubeboxv1 "github.com/tuist/kubebox/api/v1"
+	infrav1 "github.com/tuist/infra/api/v1"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 )
 
-func TestSchemeIncludesBuiltInAndKubeboxTypes(t *testing.T) {
+func TestSchemeIncludesBuiltInAndInfraTypes(t *testing.T) {
 	t.Parallel()
 
-	assertSchemeCreates[*kubeboxv1.HostPool](t, Scheme, kubeboxv1.SchemeGroupVersion.WithKind("HostPool"))
+	assertSchemeCreates[*infrav1.HostPool](t, Scheme, infrav1.SchemeGroupVersion.WithKind("HostPool"))
 	assertSchemeCreates[*corev1.Pod](t, Scheme, corev1.SchemeGroupVersion.WithKind("Pod"))
 }
 
-func TestAddToSchemeRegistersBuiltInAndKubeboxTypes(t *testing.T) {
+func TestAddToSchemeRegistersBuiltInAndInfraTypes(t *testing.T) {
 	t.Parallel()
 
 	target := runtime.NewScheme()
@@ -24,7 +24,7 @@ func TestAddToSchemeRegistersBuiltInAndKubeboxTypes(t *testing.T) {
 		t.Fatalf("AddToScheme() returned error: %v", err)
 	}
 
-	assertSchemeCreates[*kubeboxv1.Sandbox](t, target, kubeboxv1.SchemeGroupVersion.WithKind("Sandbox"))
+	assertSchemeCreates[*infrav1.Sandbox](t, target, infrav1.SchemeGroupVersion.WithKind("Sandbox"))
 	assertSchemeCreates[*corev1.Service](t, target, corev1.SchemeGroupVersion.WithKind("Service"))
 }
 

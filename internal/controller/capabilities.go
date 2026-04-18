@@ -1,8 +1,8 @@
 package controller
 
-import kubeboxv1 "github.com/tuist/kubebox/api/v1"
+import infrav1 "github.com/tuist/infra/api/v1"
 
-func poolSupportsBackend(pool kubeboxv1.HostPool, backend string) bool {
+func poolSupportsBackend(pool infrav1.HostPool, backend string) bool {
 	for _, candidate := range pool.Spec.Backends {
 		if candidate == backend {
 			return true
@@ -12,7 +12,7 @@ func poolSupportsBackend(pool kubeboxv1.HostPool, backend string) bool {
 	return false
 }
 
-func hostSupportsSandbox(host kubeboxv1.Host, sandbox kubeboxv1.Sandbox) bool {
+func hostSupportsSandbox(host infrav1.Host, sandbox infrav1.Sandbox) bool {
 	for _, capability := range host.Spec.Backends {
 		if capability.Name != sandbox.Spec.Backend {
 			continue

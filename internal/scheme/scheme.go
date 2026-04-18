@@ -1,11 +1,11 @@
 package scheme
 
 import (
-	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/runtime"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
 
-	kubeboxv1 "github.com/tuist/kubebox/api/v1"
+	infrav1 "github.com/tuist/infra/api/v1"
 )
 
 // Scheme is the central registry the controller manager and clients use to map
@@ -13,9 +13,9 @@ import (
 var Scheme = runtime.NewScheme()
 
 func init() {
-	// Register built-in Kubernetes types first, then Kubebox's custom types.
+	// Register built-in Kubernetes types first, then Infra's custom types.
 	utilruntime.Must(clientgoscheme.AddToScheme(Scheme))
-	utilruntime.Must(kubeboxv1.AddToScheme(Scheme))
+	utilruntime.Must(infrav1.AddToScheme(Scheme))
 }
 
 // AddToScheme copies the same registrations into another runtime.Scheme when a
@@ -25,5 +25,5 @@ func AddToScheme(target *runtime.Scheme) error {
 		return err
 	}
 
-	return kubeboxv1.AddToScheme(target)
+	return infrav1.AddToScheme(target)
 }

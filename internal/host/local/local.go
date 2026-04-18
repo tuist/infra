@@ -1,6 +1,6 @@
 package local
 
-import runtimepkg "github.com/tuist/kubebox/internal/host/runtime"
+import runtimepkg "github.com/tuist/infra/internal/host/runtime"
 
 type Runtime struct {
 	hostID string

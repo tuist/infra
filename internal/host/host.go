@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/tuist/kubebox/internal/host/local"
-	runtimepkg "github.com/tuist/kubebox/internal/host/runtime"
+	"github.com/tuist/infra/internal/host/local"
+	runtimepkg "github.com/tuist/infra/internal/host/runtime"
 )
 
 type Config struct {

@@ -9,25 +9,26 @@ var (
 	// SchemeGroupVersion is the Kubernetes API identity for these custom resources.
 	//
 	// In YAML this becomes:
-	//   apiVersion: kubebox.tuist.dev/v1
+	//   apiVersion: infra.tuist.dev/v1
 	//
-	// "kubebox.tuist.dev" is the API group and "v1" is the API version.
-	SchemeGroupVersion = schema.GroupVersion{Group: "kubebox.tuist.dev", Version: "v1"}
+	// "infra.tuist.dev" is the API group and "v1" is the API version.
+	SchemeGroupVersion = schema.GroupVersion{Group: "infra.tuist.dev", Version: "v1"}
 
 	// SchemeBuilder is a small controller-runtime helper used to register our
 	// Kubernetes API types under this group and version.
-	SchemeBuilder      = &scheme.Builder{GroupVersion: SchemeGroupVersion}
+	SchemeBuilder = &scheme.Builder{GroupVersion: SchemeGroupVersion}
 
 	// AddToScheme is the function the rest of the application calls when it wants
-	// the Kubernetes runtime to recognize Kubebox resources such as HostPool and
+	// the Kubernetes runtime to recognize Infra resources such as HostPool and
 	// Sandbox.
-	AddToScheme        = SchemeBuilder.AddToScheme
+	AddToScheme = SchemeBuilder.AddToScheme
 )
 
 // Resource returns a fully-qualified resource name in the current API group.
 //
 // Example:
-//   Resource("hostpools") -> hostpools.kubebox.tuist.dev
+//
+//	Resource("hostpools") -> hostpools.infra.tuist.dev
 func Resource(resource string) schema.GroupResource {
 	return SchemeGroupVersion.WithResource(resource).GroupResource()
 }

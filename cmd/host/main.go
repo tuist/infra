@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/tuist/kubebox/internal/host"
+	"github.com/tuist/infra/internal/host"
 )
 
 func main() {
@@ -34,7 +34,7 @@ func main() {
 		log.Fatalf("unable to create host service: %v", err)
 	}
 
-	log.Printf("starting kubebox host service on %s (mode=%s backends=%s hostID=%s)", listenAddress, mode, backends, hostID)
+	log.Printf("starting infra host service on %s (mode=%s backends=%s hostID=%s)", listenAddress, mode, backends, hostID)
 	if err := a.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		log.Fatalf("host service exited with error: %v", err)
 	}

@@ -1,6 +1,6 @@
 # Architecture
 
-This document captures the current technical design for Kubebox.
+This document captures the current technical design for Infra.
 
 ## Goals
 
@@ -24,7 +24,7 @@ Product / CI / CLI
         |
         v
 +------------------------+
-| Kubebox API            |
+| Infra API              |
 | - authn/authz          |
 | - sandbox lifecycle    |
 | - access information   |
@@ -127,17 +127,17 @@ The intended flow is:
 
 1. an operator creates or updates a `HostPool`
 2. the `HostPool` controller computes the required warm capacity
-3. Kubebox creates or deletes `ProviderMachine` resources
+3. Infra creates or deletes `ProviderMachine` resources
 4. provider controllers reconcile those resources against AWS, Scaleway, or Metal3
-5. provisioned machines boot and start the Kubebox host service
+5. provisioned machines boot and start the Infra host service
 6. the host service registers a `Host`
 7. the placement controller binds `Sandbox` resources to eligible `Host`s
-8. for dedicated placement, Kubebox creates a `HostLease`
+8. for dedicated placement, Infra creates a `HostLease`
 9. on teardown, the lease is released and the host either returns to the pool or is drained for scale-down
 
 ## Host Agents
 
-Host services are binaries developed as part of Kubebox and installed on each bare-metal machine.
+Host services are binaries developed as part of Infra and installed on each bare-metal machine.
 
 They are responsible for:
 
@@ -168,7 +168,7 @@ macOS hosts use `tart`.
 
 macOS should be modeled as dedicated single-VM host capacity. In practice, the design assumes one active VM per host.
 
-Note: Kubebox can remain MIT-licensed while the macOS backend depends on Tart, which has its own separate licensing terms. Operators need to evaluate that dependency independently.
+Note: Infra can remain MIT-licensed while the macOS backend depends on Tart, which has its own separate licensing terms. Operators need to evaluate that dependency independently.
 
 ## Capacity Providers
 
@@ -204,7 +204,7 @@ The first implementation should be reproducible locally at the control-plane lev
 That means:
 
 - a local Kubernetes cluster such as `kind`
-- the real Kubebox controllers
+- the real Infra controllers
 - the real API server
 - a `local` host backend for simulated machines
 
