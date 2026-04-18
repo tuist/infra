@@ -22,7 +22,13 @@ func (r *HostPoolReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	log.Info("host pool reconciliation placeholder", "desiredIdleHosts", pool.Spec.WarmPool.MinIdleHosts)
+	log.Info(
+		"host pool reconciliation placeholder",
+		"desiredIdleHosts", pool.Spec.WarmPool.MinIdleHosts,
+		"backends", pool.Spec.Backends,
+		"os", pool.Spec.OS,
+		"arch", pool.Spec.Arch,
+	)
 	return ctrl.Result{}, nil
 }
 

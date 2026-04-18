@@ -22,7 +22,26 @@ func (r *SandboxReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	log.Info("sandbox reconciliation placeholder", "tenant", sandbox.Spec.Tenant, "classRef", sandbox.Spec.ClassRef)
+	var hosts kubeboxv1.HostList
+	if err := r.List(ctx, &hosts); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	matchingHosts := make([]string, 0, len(hosts.Items))
+	for _, host := range hosts.Items {
+		if hostSupportsSandbox(host, sandbox) {
+			matchingHosts = append(matchingHosts, host.Name)
+		}
+	}
+
+	log.Info(
+		"sandbox reconciliation placeholder",
+		"tenant", sandbox.Spec.Tenant,
+		"classRef", sandbox.Spec.ClassRef,
+		"backend", sandbox.Spec.Backend,
+		"guestOS", sandbox.Spec.GuestOS,
+		"matchingHosts", matchingHosts,
+	)
 	return ctrl.Result{}, nil
 }
 
