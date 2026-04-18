@@ -9,10 +9,10 @@ var (
 	// SchemeGroupVersion is the Kubernetes API identity for these custom resources.
 	//
 	// In YAML this becomes:
-	//   apiVersion: kubebox.dev/v1
+	//   apiVersion: kubebox.tuist.dev/v1
 	//
-	// "kubebox.dev" is the API group and "v1" is the API version.
-	SchemeGroupVersion = schema.GroupVersion{Group: "kubebox.dev", Version: "v1"}
+	// "kubebox.tuist.dev" is the API group and "v1" is the API version.
+	SchemeGroupVersion = schema.GroupVersion{Group: "kubebox.tuist.dev", Version: "v1"}
 
 	// SchemeBuilder is a small controller-runtime helper used to register our Go
 	// structs as Kubernetes API types.
@@ -30,7 +30,7 @@ var (
 // Resource returns a fully-qualified resource name in the current API group.
 //
 // Example:
-//   Resource("hostpools") -> hostpools.kubebox.dev
+//   Resource("hostpools") -> hostpools.kubebox.tuist.dev
 func Resource(resource string) schema.GroupResource {
 	return SchemeGroupVersion.WithResource(resource).GroupResource()
 }

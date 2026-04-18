@@ -39,7 +39,7 @@ func main() {
 		Metrics:                metricsserver.Options{BindAddress: metricsAddr},
 		HealthProbeBindAddress: probeAddr,
 		LeaderElection:         enableLeaderElection,
-		LeaderElectionID:       "kubebox-controller.kubebox.dev",
+		LeaderElectionID:       "kubebox-controller.kubebox.tuist.dev",
 	})
 	if err != nil {
 		ctrl.Log.WithName("setup").Error(err, "unable to create controller manager")

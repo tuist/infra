@@ -28,7 +28,7 @@ func New(cfg Config) *Server {
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]any{
 			"name":       "kubebox-apiserver",
-			"apiVersion": "kubebox.dev/v1",
+			"apiVersion": "kubebox.tuist.dev/v1",
 			"version":    "dev",
 		})
 	})
