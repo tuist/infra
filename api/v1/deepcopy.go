@@ -49,6 +49,14 @@ func (in *HostList) DeepCopyObject() runtime.Object {
 	return clone(in)
 }
 
+func (in *HostImage) DeepCopyObject() runtime.Object {
+	return clone(in)
+}
+
+func (in *HostImageList) DeepCopyObject() runtime.Object {
+	return clone(in)
+}
+
 func (in *HostLease) DeepCopyObject() runtime.Object {
 	return clone(in)
 }

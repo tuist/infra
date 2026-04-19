@@ -63,3 +63,34 @@ func contains(values []string, target string) bool {
 
 	return false
 }
+
+// hostHasReadyImageForSandbox reports whether the host already has the exact
+// image a sandbox needs in a Ready state.
+//
+// If the sandbox does not name an image yet, the scheduler does not block on
+// image-cache state.
+func hostHasReadyImageForSandbox(hostName string, sandbox infrav1.Sandbox, hostImages []infrav1.HostImage) bool {
+	if sandbox.Spec.Image == "" {
+		return true
+	}
+
+	for _, hostImage := range hostImages {
+		if hostImage.Spec.HostRef != hostName {
+			continue
+		}
+
+		if hostImage.Spec.VMRuntime != sandbox.Spec.VMRuntime {
+			continue
+		}
+
+		if hostImage.Spec.Image != sandbox.Spec.Image {
+			continue
+		}
+
+		if hostImage.Status.Phase == infrav1.PhaseReady {
+			return true
+		}
+	}
+
+	return false
+}

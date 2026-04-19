@@ -10,7 +10,7 @@ It is designed for products that need fast, isolated environments on:
 
 ## ✨ What Infra Aims To Provide
 
-- ⚡ Warm pools of ready bare-metal hosts
+- ⚡ Warm pools of ready bare-metal hosts and VM images
 - 🧹 Ephemeral full-VM sandboxes with TTL-based cleanup
 - 🔒 Dedicated and shared tenancy policies
 - 🖥️ SSH and GUI access for supported images

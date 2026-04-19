@@ -13,6 +13,7 @@ func TestSchemeIncludesBuiltInAndInfraTypes(t *testing.T) {
 	t.Parallel()
 
 	assertSchemeCreates[*infrav1.HostPool](t, Scheme, infrav1.SchemeGroupVersion.WithKind("HostPool"))
+	assertSchemeCreates[*infrav1.HostImage](t, Scheme, infrav1.SchemeGroupVersion.WithKind("HostImage"))
 	assertSchemeCreates[*corev1.Pod](t, Scheme, corev1.SchemeGroupVersion.WithKind("Pod"))
 }
 
@@ -25,6 +26,7 @@ func TestAddToSchemeRegistersBuiltInAndInfraTypes(t *testing.T) {
 	}
 
 	assertSchemeCreates[*infrav1.Sandbox](t, target, infrav1.SchemeGroupVersion.WithKind("Sandbox"))
+	assertSchemeCreates[*infrav1.HostImage](t, target, infrav1.SchemeGroupVersion.WithKind("HostImage"))
 	assertSchemeCreates[*corev1.Service](t, target, corev1.SchemeGroupVersion.WithKind("Service"))
 }
 

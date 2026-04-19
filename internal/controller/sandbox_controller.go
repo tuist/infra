@@ -27,9 +27,14 @@ func (r *SandboxReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		return ctrl.Result{}, err
 	}
 
+	var hostImages infrav1.HostImageList
+	if err := r.List(ctx, &hostImages); err != nil {
+		return ctrl.Result{}, err
+	}
+
 	matchingHosts := make([]string, 0, len(hosts.Items))
 	for _, host := range hosts.Items {
-		if hostSupportsSandbox(host, sandbox) {
+		if hostSupportsSandbox(host, sandbox) && hostHasReadyImageForSandbox(host.Name, sandbox, hostImages.Items) {
 			matchingHosts = append(matchingHosts, host.Name)
 		}
 	}
@@ -39,6 +44,7 @@ func (r *SandboxReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		"tenant", sandbox.Spec.Tenant,
 		"classRef", sandbox.Spec.ClassRef,
 		"vmRuntime", sandbox.Spec.VMRuntime,
+		"image", sandbox.Spec.Image,
 		"guestOS", sandbox.Spec.GuestOS,
 		"matchingHosts", matchingHosts,
 	)

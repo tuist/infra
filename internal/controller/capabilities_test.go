@@ -100,3 +100,93 @@ func TestHostSupportsSandbox(t *testing.T) {
 		})
 	}
 }
+
+func TestHostHasReadyImageForSandbox(t *testing.T) {
+	t.Parallel()
+
+	hostImages := []infrav1.HostImage{
+		{
+			Spec: infrav1.HostImageSpec{
+				HostRef:   "host-a",
+				VMRuntime: "tart",
+				Image:     "macos-14-base",
+			},
+			Status: infrav1.HostImageStatus{
+				Phase: infrav1.PhaseReady,
+			},
+		},
+		{
+			Spec: infrav1.HostImageSpec{
+				HostRef:   "host-a",
+				VMRuntime: "cloud-hypervisor",
+				Image:     "ubuntu-24.04",
+			},
+			Status: infrav1.HostImageStatus{
+				Phase: infrav1.PhasePulling,
+			},
+		},
+	}
+
+	testCases := []struct {
+		name     string
+		hostName string
+		sandbox  infrav1.Sandbox
+		want     bool
+	}{
+		{
+			name:     "no image requested",
+			hostName: "host-a",
+			sandbox: infrav1.Sandbox{
+				Spec: infrav1.SandboxSpec{
+					VMRuntime: "tart",
+				},
+			},
+			want: true,
+		},
+		{
+			name:     "ready image for host and runtime",
+			hostName: "host-a",
+			sandbox: infrav1.Sandbox{
+				Spec: infrav1.SandboxSpec{
+					VMRuntime: "tart",
+					Image:     "macos-14-base",
+				},
+			},
+			want: true,
+		},
+		{
+			name:     "image still pulling",
+			hostName: "host-a",
+			sandbox: infrav1.Sandbox{
+				Spec: infrav1.SandboxSpec{
+					VMRuntime: "cloud-hypervisor",
+					Image:     "ubuntu-24.04",
+				},
+			},
+			want: false,
+		},
+		{
+			name:     "image on another host",
+			hostName: "host-b",
+			sandbox: infrav1.Sandbox{
+				Spec: infrav1.SandboxSpec{
+					VMRuntime: "tart",
+					Image:     "macos-14-base",
+				},
+			},
+			want: false,
+		},
+	}
+
+	for _, testCase := range testCases {
+		testCase := testCase
+		t.Run(testCase.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := hostHasReadyImageForSandbox(testCase.hostName, testCase.sandbox, hostImages)
+			if got != testCase.want {
+				t.Fatalf("hostHasReadyImageForSandbox() = %t, want %t", got, testCase.want)
+			}
+		})
+	}
+}

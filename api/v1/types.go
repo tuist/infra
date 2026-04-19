@@ -14,6 +14,7 @@ type Phase string
 
 const (
 	PhasePending       Phase = "Pending"
+	PhasePulling       Phase = "Pulling"
 	PhaseProvisioning  Phase = "Provisioning"
 	PhaseBootstrapping Phase = "Bootstrapping"
 	PhaseRegistered    Phase = "Registered"
@@ -78,7 +79,7 @@ type HostPoolSpec struct {
 	HostPolicy   HostPolicy      `json:"hostPolicy,omitempty"`
 	WarmPool     WarmPoolSpec    `json:"warmPool,omitempty"`
 	ScaleDown    ScaleDownPolicy `json:"scaleDown,omitempty"`
-	Images       []string        `json:"images,omitempty"`
+	WarmImages   []string        `json:"warmImages,omitempty"`
 }
 
 // HostPoolStatus is the observed state reported by controllers.
@@ -129,12 +130,35 @@ type HostSpec struct {
 // HostStatus describes whether the machine is healthy and how much allocatable
 // capacity it currently exposes to the scheduler.
 type HostStatus struct {
-	Phase            Phase              `json:"phase,omitempty"`
-	Healthy          bool               `json:"healthy,omitempty"`
-	AllocatableSlots int32              `json:"allocatableSlots,omitempty"`
-	CachedImages     []string           `json:"cachedImages,omitempty"`
-	LastHeartbeat    *metav1.Time       `json:"lastHeartbeat,omitempty"`
-	Conditions       []metav1.Condition `json:"conditions,omitempty"`
+	Phase             Phase              `json:"phase,omitempty"`
+	Healthy           bool               `json:"healthy,omitempty"`
+	AllocatableSlots  int32              `json:"allocatableSlots,omitempty"`
+	ReadyImageCount   int32              `json:"readyImageCount,omitempty"`
+	PullingImageCount int32              `json:"pullingImageCount,omitempty"`
+	FailedImageCount  int32              `json:"failedImageCount,omitempty"`
+	LastHeartbeat     *metav1.Time       `json:"lastHeartbeat,omitempty"`
+	Conditions        []metav1.Condition `json:"conditions,omitempty"`
+}
+
+// HostImageSpec describes one desired image cache entry for a host and VM runtime.
+//
+// This is the reconciled state that lets Infra warm images asynchronously
+// instead of assuming they are already present on the host.
+type HostImageSpec struct {
+	HostRef   string `json:"hostRef,omitempty"`
+	VMRuntime string `json:"vmRuntime,omitempty"`
+	Image     string `json:"image,omitempty"`
+}
+
+// HostImageStatus reports whether that image is still being pulled, is ready to
+// use, or failed to warm on the host.
+type HostImageStatus struct {
+	Phase           Phase              `json:"phase,omitempty"`
+	ProgressPercent int32              `json:"progressPercent,omitempty"`
+	Digest          string             `json:"digest,omitempty"`
+	FailureMessage  string             `json:"failureMessage,omitempty"`
+	LastUpdateTime  *metav1.Time       `json:"lastUpdateTime,omitempty"`
+	Conditions      []metav1.Condition `json:"conditions,omitempty"`
 }
 
 // HostLeaseSpec is an exclusive claim on a host for a sandbox.
@@ -271,6 +295,22 @@ type HostList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []Host `json:"items"`
+}
+
+// HostImage represents one desired image cache entry on a host.
+type HostImage struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	Spec   HostImageSpec   `json:"spec,omitempty"`
+	Status HostImageStatus `json:"status,omitempty"`
+}
+
+// HostImageList is the list variant for HostImage resources.
+type HostImageList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty"`
+	Items           []HostImage `json:"items"`
 }
 
 // HostLease represents exclusive ownership of a host by one sandbox.

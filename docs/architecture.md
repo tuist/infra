@@ -69,6 +69,7 @@ Typical policy includes:
 - provider type and region or zone
 - allowed tenancy modes
 - warm-pool targets
+- desired warm images
 - scale-down behavior
 
 `HostPool` is the main scaling input.
@@ -90,10 +91,21 @@ A `Host` reports:
 - VM runtime support
 - OS and architecture
 - allocatable capacity
-- cached images
+- image-cache summary counts
 - agent health
 
 Only healthy `Host` resources count as usable capacity.
+
+### `HostImage`
+
+Represents one desired image cache entry for a specific host and VM runtime.
+
+Suggested lifecycle:
+
+`Pending -> Pulling -> Ready -> Failed`
+
+`HostImage` is the first-class state that lets Infra reconcile image warming
+asynchronously instead of assuming images are already present on a host.
 
 ### `HostLease`
 
@@ -131,9 +143,11 @@ The intended flow is:
 4. provider controllers reconcile those resources against AWS, Scaleway, or Metal3
 5. provisioned machines boot and start the Infra host service
 6. the host service registers a `Host`
-7. the placement controller binds `Sandbox` resources to eligible `Host`s
-8. for dedicated placement, Infra creates a `HostLease`
-9. on teardown, the lease is released and the host either returns to the pool or is drained for scale-down
+7. the image cache controller creates `HostImage` resources for the pool's desired warm images
+8. the host service pulls those images asynchronously and reports `HostImage` state
+9. the placement controller binds `Sandbox` resources only to eligible `Host`s whose required `HostImage` is `Ready`
+10. for dedicated placement, Infra creates a `HostLease`
+11. on teardown, the lease is released and the host either returns to the pool or is drained for scale-down
 
 ## Host Agents
 
@@ -144,6 +158,7 @@ They are responsible for:
 - registering the host with the control plane
 - heartbeating health and capacity
 - pulling and caching images
+- reporting per-image cache state back through `HostImage` resources
 - creating, starting, stopping, and deleting VMs
 - publishing access details
 - cleaning the host after teardown
@@ -207,6 +222,7 @@ That means:
 - the real Infra controllers
 - the real API server
 - a `local` host runtime for simulated machines
+- a reconciled image-cache loop that can move `HostImage` resources through `Pending`, `Pulling`, and `Ready`
 
 VM-runtime-specific smoke tests can then be run where the host hardware allows it:
 

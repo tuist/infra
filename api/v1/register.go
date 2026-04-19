@@ -45,6 +45,8 @@ func init() {
 		&ProviderMachineList{},
 		&Host{},
 		&HostList{},
+		&HostImage{},
+		&HostImageList{},
 		&HostLease{},
 		&HostLeaseList{},
 		&SandboxClass{},
