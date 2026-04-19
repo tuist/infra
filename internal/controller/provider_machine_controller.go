@@ -22,7 +22,47 @@ func (r *ProviderMachineReconciler) Reconcile(ctx context.Context, req ctrl.Requ
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	log.Info("provider machine reconciliation placeholder", "providerKind", machine.Spec.Provider.Kind)
+	var hosts infrav1.HostList
+	if err := r.List(ctx, &hosts, client.InNamespace(req.Namespace)); err != nil {
+		return ctrl.Result{}, err
+	}
+
+	updated := machine
+	updated.Status.LastUpdateTime = now()
+
+	foundHost := false
+	for _, host := range hosts.Items {
+		if !hostMatchesProviderMachine(host, machine) {
+			continue
+		}
+
+		updated.Status.ObservedHost = host.Name
+		updated.Status.Phase = infrav1.PhaseRegistered
+		foundHost = true
+		break
+	}
+
+	if !foundHost {
+		updated.Status.ObservedHost = ""
+		if machine.Status.ProviderID != "" {
+			updated.Status.Phase = infrav1.PhaseBootstrapping
+		} else {
+			updated.Status.Phase = infrav1.PhasePending
+		}
+	}
+
+	if !providerMachineStatusEqual(machine.Status, updated.Status) {
+		if err := r.Status().Update(ctx, &updated); err != nil {
+			return ctrl.Result{}, err
+		}
+	}
+
+	log.Info(
+		"provider machine reconciliation complete",
+		"providerKind", machine.Spec.Provider.Kind,
+		"phase", updated.Status.Phase,
+		"observedHost", updated.Status.ObservedHost,
+	)
 	return ctrl.Result{}, nil
 }
 
