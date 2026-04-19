@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v3
+        with:
+          cache: true
+      - name: Build
+        run: mise exec -- go build ./...
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v3
+        with:
+          cache: true
+      - name: Test
+        run: mise exec -- go test ./...
+
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v3
+        with:
+          cache: true
+      - name: Check formatting
+        run: |
+          unformatted=""
+          for file in $(git ls-files '*.go'); do
+            result="$(mise exec -- gofmt -l "$file")"
+            if [ -n "$result" ]; then
+              unformatted="${unformatted}${result}\n"
+            fi
+          done
+
+          if [ -n "$unformatted" ]; then
+            echo "Unformatted Go files:"
+            printf "%b" "$unformatted"
+            exit 1
+          fi
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v3
+        with:
+          cache: true
+      - name: Lint
+        run: mise exec -- golangci-lint run --timeout=5m ./...
