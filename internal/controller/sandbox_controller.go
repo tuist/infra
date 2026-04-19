@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"slices"
 
 	infrav1 "github.com/tuist/infra/api/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -39,13 +40,32 @@ func (r *SandboxReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		}
 	}
 
+	slices.Sort(matchingHosts)
+
+	updated := sandbox
+	if len(matchingHosts) == 0 {
+		updated.Status.Phase = infrav1.PhasePending
+		updated.Status.HostRef = ""
+	} else {
+		updated.Status.Phase = infrav1.PhaseScheduled
+		updated.Status.HostRef = matchingHosts[0]
+	}
+
+	if !sandboxStatusEqual(sandbox.Status, updated.Status) {
+		if err := r.Status().Update(ctx, &updated); err != nil {
+			return ctrl.Result{}, err
+		}
+	}
+
 	log.Info(
-		"sandbox reconciliation placeholder",
+		"sandbox reconciliation complete",
 		"tenant", sandbox.Spec.Tenant,
 		"classRef", sandbox.Spec.ClassRef,
 		"vmRuntime", sandbox.Spec.VMRuntime,
 		"image", sandbox.Spec.Image,
 		"guestOS", sandbox.Spec.GuestOS,
+		"selectedHost", updated.Status.HostRef,
+		"phase", updated.Status.Phase,
 		"matchingHosts", matchingHosts,
 	)
 	return ctrl.Result{}, nil

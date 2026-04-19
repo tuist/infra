@@ -56,6 +56,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err := (&controller.HostReconciler{Client: mgr.GetClient(), Scheme: mgr.GetScheme()}).SetupWithManager(mgr); err != nil {
+		ctrl.Log.WithName("setup").Error(err, "unable to register host controller")
+		os.Exit(1)
+	}
+
 	if err := (&controller.HostImageReconciler{Client: mgr.GetClient(), Scheme: mgr.GetScheme()}).SetupWithManager(mgr); err != nil {
 		ctrl.Log.WithName("setup").Error(err, "unable to register host image controller")
 		os.Exit(1)
