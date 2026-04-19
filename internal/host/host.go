@@ -14,7 +14,7 @@ import (
 type Config struct {
 	ListenAddress string
 	Mode          string
-	Backends      []string
+	VMRuntimes    []string
 	HostID        string
 }
 
@@ -83,22 +83,22 @@ func newRuntime(cfg Config) (runtimepkg.Runtime, error) {
 		return &noopRuntime{
 			name: "linux",
 			capabilities: runtimepkg.Capabilities{
-				HostID:   cfg.HostID,
-				Mode:     cfg.Mode,
-				Backends: buildBackends(cfg.Mode, cfg.Backends),
-				OS:       "linux",
-				Arch:     "amd64",
+				HostID:     cfg.HostID,
+				Mode:       cfg.Mode,
+				VMRuntimes: buildVMRuntimes(cfg.Mode, cfg.VMRuntimes),
+				OS:         "linux",
+				Arch:       "amd64",
 			},
 		}, nil
 	case "macos":
 		return &noopRuntime{
 			name: "macos",
 			capabilities: runtimepkg.Capabilities{
-				HostID:   cfg.HostID,
-				Mode:     cfg.Mode,
-				Backends: buildBackends(cfg.Mode, cfg.Backends),
-				OS:       "macos",
-				Arch:     "arm64",
+				HostID:     cfg.HostID,
+				Mode:       cfg.Mode,
+				VMRuntimes: buildVMRuntimes(cfg.Mode, cfg.VMRuntimes),
+				OS:         "macos",
+				Arch:       "arm64",
 			},
 		}, nil
 	default:
@@ -106,25 +106,25 @@ func newRuntime(cfg Config) (runtimepkg.Runtime, error) {
 	}
 }
 
-func buildBackends(mode string, backends []string) []runtimepkg.BackendCapability {
-	normalized := normalizeBackends(mode, backends)
-	capabilities := make([]runtimepkg.BackendCapability, 0, len(normalized))
+func buildVMRuntimes(mode string, vmRuntimes []string) []runtimepkg.VMRuntimeCapability {
+	normalized := normalizeVMRuntimes(mode, vmRuntimes)
+	capabilities := make([]runtimepkg.VMRuntimeCapability, 0, len(normalized))
 
-	for _, backend := range normalized {
-		capabilities = append(capabilities, capabilityForBackend(mode, backend))
+	for _, vmRuntime := range normalized {
+		capabilities = append(capabilities, capabilityForVMRuntime(mode, vmRuntime))
 	}
 
 	return capabilities
 }
 
-func normalizeBackends(mode string, backends []string) []string {
-	filtered := make([]string, 0, len(backends))
-	for _, backend := range backends {
-		backend = strings.TrimSpace(backend)
-		if backend == "" {
+func normalizeVMRuntimes(mode string, vmRuntimes []string) []string {
+	filtered := make([]string, 0, len(vmRuntimes))
+	for _, vmRuntime := range vmRuntimes {
+		vmRuntime = strings.TrimSpace(vmRuntime)
+		if vmRuntime == "" {
 			continue
 		}
-		filtered = append(filtered, backend)
+		filtered = append(filtered, vmRuntime)
 	}
 
 	if len(filtered) > 0 {
@@ -141,25 +141,25 @@ func normalizeBackends(mode string, backends []string) []string {
 	}
 }
 
-func capabilityForBackend(mode, backend string) runtimepkg.BackendCapability {
+func capabilityForVMRuntime(mode, vmRuntime string) runtimepkg.VMRuntimeCapability {
 	switch mode {
 	case "linux":
-		return runtimepkg.BackendCapability{
-			Name:                backend,
+		return runtimepkg.VMRuntimeCapability{
+			Name:                vmRuntime,
 			GuestOSes:           []string{"linux"},
 			MaxActiveVMsPerHost: 10,
 			SupportsShared:      true,
 		}
 	case "macos":
-		return runtimepkg.BackendCapability{
-			Name:                backend,
+		return runtimepkg.VMRuntimeCapability{
+			Name:                vmRuntime,
 			GuestOSes:           []string{"linux", "macos"},
 			MaxActiveVMsPerHost: 1,
 			SupportsShared:      false,
 		}
 	default:
-		return runtimepkg.BackendCapability{
-			Name:                backend,
+		return runtimepkg.VMRuntimeCapability{
+			Name:                vmRuntime,
 			GuestOSes:           []string{"linux"},
 			MaxActiveVMsPerHost: 1,
 			SupportsShared:      false,

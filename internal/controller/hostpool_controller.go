@@ -25,7 +25,7 @@ func (r *HostPoolReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 	log.Info(
 		"host pool reconciliation placeholder",
 		"desiredIdleHosts", pool.Spec.WarmPool.MinIdleHosts,
-		"backends", pool.Spec.Backends,
+		"vmRuntimes", pool.Spec.VMRuntimes,
 		"os", pool.Spec.OS,
 		"arch", pool.Spec.Arch,
 	)

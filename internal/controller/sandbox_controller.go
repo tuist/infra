@@ -38,7 +38,7 @@ func (r *SandboxReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 		"sandbox reconciliation placeholder",
 		"tenant", sandbox.Spec.Tenant,
 		"classRef", sandbox.Spec.ClassRef,
-		"backend", sandbox.Spec.Backend,
+		"vmRuntime", sandbox.Spec.VMRuntime,
 		"guestOS", sandbox.Spec.GuestOS,
 		"matchingHosts", matchingHosts,
 	)

@@ -2,17 +2,17 @@ package controller
 
 import infrav1 "github.com/tuist/infra/api/v1"
 
-// poolSupportsBackend reports whether a HostPool is meant to supply hosts for
-// a given runtime backend.
+// poolSupportsVMRuntime reports whether a HostPool is meant to supply hosts for
+// a given VM runtime.
 //
 // Example:
 //
-//	pool.spec.backends = ["cloud-hypervisor", "tart"]
-//	backend = "tart"
+//	pool.spec.vmRuntimes = ["cloud-hypervisor", "tart"]
+//	vmRuntime = "tart"
 //	-> true
-func poolSupportsBackend(pool infrav1.HostPool, backend string) bool {
-	for _, candidate := range pool.Spec.Backends {
-		if candidate == backend {
+func poolSupportsVMRuntime(pool infrav1.HostPool, vmRuntime string) bool {
+	for _, candidate := range pool.Spec.VMRuntimes {
+		if candidate == vmRuntime {
 			return true
 		}
 	}
@@ -20,27 +20,27 @@ func poolSupportsBackend(pool infrav1.HostPool, backend string) bool {
 	return false
 }
 
-// hostSupportsSandbox reports whether a specific host advertises a backend
+// hostSupportsSandbox reports whether a specific host advertises a VM runtime
 // capability that can run the requested sandbox.
 //
-// The scheduler first matches the backend name, then optionally matches the
+// The scheduler first matches the VM runtime name, then optionally matches the
 // guest operating system if the sandbox asked for one.
 //
 // Example:
 //
-//	host.spec.backends = [{name: "tart", guestOSes: ["linux", "macos"]}]
-//	sandbox.spec.backend = "tart"
+//	host.spec.vmRuntimes = [{name: "tart", guestOSes: ["linux", "macos"]}]
+//	sandbox.spec.vmRuntime = "tart"
 //	sandbox.spec.guestOS = "linux"
 //	-> true
 //
 // Example:
 //
-//	host.spec.backends = [{name: "tart", guestOSes: ["linux", "macos"]}]
-//	sandbox.spec.backend = "cloud-hypervisor"
+//	host.spec.vmRuntimes = [{name: "tart", guestOSes: ["linux", "macos"]}]
+//	sandbox.spec.vmRuntime = "cloud-hypervisor"
 //	-> false
 func hostSupportsSandbox(host infrav1.Host, sandbox infrav1.Sandbox) bool {
-	for _, capability := range host.Spec.Backends {
-		if capability.Name != sandbox.Spec.Backend {
+	for _, capability := range host.Spec.VMRuntimes {
+		if capability.Name != sandbox.Spec.VMRuntime {
 			continue
 		}
 

@@ -7,14 +7,14 @@ This document captures the current technical design for Infra.
 - Provision ephemeral full-VM sandboxes on bare-metal machines
 - Support Linux and macOS under one control plane
 - Use warm pools to reduce startup latency
-- Support dedicated and shared placement where the backend allows it
+- Support dedicated and shared placement where the VM runtime allows it
 - Reconcile host acquisition and release through Kubernetes controllers
 - Keep product integration simple through a public API rather than direct CRD usage
 
 ## Non-Goals for v1
 
 - Container-native sandboxes as a first-class primitive
-- A single machine reproducing every real backend
+- A single machine reproducing every real VM runtime
 - Hiding provider constraints behind a fake generic model
 
 ## High-Level Architecture
@@ -45,7 +45,7 @@ Product / CI / CLI
 | Host Agents                                   |
 | - linux -> cloud-hypervisor                   |
 | - macOS -> tart                               |
-| - local -> simulated backend                  |
+| - local -> simulated runtime                  |
 +-----------------------------------------------+
         |
         v
@@ -65,7 +65,7 @@ Defines desired capacity and policy for a pool of interchangeable hosts.
 
 Typical policy includes:
 
-- backend and architecture
+- VM runtime and architecture
 - provider type and region or zone
 - allowed tenancy modes
 - warm-pool targets
@@ -87,7 +87,7 @@ Represents one registered machine that is healthy and schedulable.
 
 A `Host` reports:
 
-- backend support
+- VM runtime support
 - OS and architecture
 - allocatable capacity
 - cached images
@@ -105,7 +105,7 @@ This is required for dedicated placement and for policies such as `maxActiveVMsP
 
 Defines a reusable sandbox shape:
 
-- runtime backend
+- VM runtime
 - CPU, memory, and disk defaults
 - tenancy policy
 - access policy
@@ -154,7 +154,7 @@ Deployment model:
 - macOS: service managed by `launchd`
 - local development: same agent in simulated mode
 
-## Runtime Backends
+## VM Runtimes
 
 ### Linux
 
@@ -168,7 +168,7 @@ macOS hosts use `tart`.
 
 macOS should be modeled as dedicated single-VM host capacity. In practice, the design assumes one active VM per host.
 
-Note: Infra can remain MIT-licensed while the macOS backend depends on Tart, which has its own separate licensing terms. Operators need to evaluate that dependency independently.
+Note: Infra can remain MIT-licensed while the macOS runtime depends on Tart, which has its own separate licensing terms. Operators need to evaluate that dependency independently.
 
 ## Capacity Providers
 
@@ -206,9 +206,9 @@ That means:
 - a local Kubernetes cluster such as `kind`
 - the real Infra controllers
 - the real API server
-- a `local` host backend for simulated machines
+- a `local` host runtime for simulated machines
 
-Backend-specific smoke tests can then be run where the host hardware allows it:
+VM-runtime-specific smoke tests can then be run where the host hardware allows it:
 
 - Linux machine for real `cloud-hypervisor`
 - Apple Silicon macOS machine for real `tart`
@@ -220,7 +220,7 @@ Backend-specific smoke tests can then be run where the host hardware allows it:
 - define API types and CRDs
 - scaffold the controller manager
 - scaffold the API server
-- build the `local` backend
+- build the `local` runtime
 - implement the basic sandbox lifecycle
 
 ### Phase 1

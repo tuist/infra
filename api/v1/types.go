@@ -43,11 +43,11 @@ type HostPolicy struct {
 	MaxActiveVMsPerHost int32 `json:"maxActiveVMsPerHost,omitempty"`
 }
 
-// BackendCapability describes one runtime backend that a host can expose.
+// VMRuntimeCapability describes one VM runtime that a host can expose.
 //
-// A single machine may support more than one backend, and each backend may be
+// A single machine may support more than one VM runtime, and each runtime may be
 // able to run different guest operating systems.
-type BackendCapability struct {
+type VMRuntimeCapability struct {
 	Name                string   `json:"name,omitempty"`
 	GuestOSes           []string `json:"guestOSes,omitempty"`
 	MaxActiveVMsPerHost int32    `json:"maxActiveVMsPerHost,omitempty"`
@@ -71,7 +71,7 @@ type ScaleDownPolicy struct {
 // In Kubernetes, "Spec" means "what the user wants."
 type HostPoolSpec struct {
 	Provider     ProviderRef     `json:"provider,omitempty"`
-	Backends     []string        `json:"backends,omitempty"`
+	VMRuntimes   []string        `json:"vmRuntimes,omitempty"`
 	OS           string          `json:"os,omitempty"`
 	Arch         string          `json:"arch,omitempty"`
 	TenancyModes []TenancyMode   `json:"tenancyModes,omitempty"`
@@ -119,11 +119,11 @@ type ProviderMachineStatus struct {
 // A Host usually appears after a ProviderMachine has booted and the host
 // service has registered itself with the control plane.
 type HostSpec struct {
-	PoolRef            string              `json:"poolRef,omitempty"`
-	ProviderMachineRef string              `json:"providerMachineRef,omitempty"`
-	Backends           []BackendCapability `json:"backends,omitempty"`
-	OS                 string              `json:"os,omitempty"`
-	Arch               string              `json:"arch,omitempty"`
+	PoolRef            string                `json:"poolRef,omitempty"`
+	ProviderMachineRef string                `json:"providerMachineRef,omitempty"`
+	VMRuntimes         []VMRuntimeCapability `json:"vmRuntimes,omitempty"`
+	OS                 string                `json:"os,omitempty"`
+	Arch               string                `json:"arch,omitempty"`
 }
 
 // HostStatus describes whether the machine is healthy and how much allocatable
@@ -170,7 +170,7 @@ type AccessPolicy struct {
 // It lets callers request "a kind of sandbox" without repeating all runtime and
 // resource settings every time.
 type SandboxClassSpec struct {
-	Backend    string               `json:"backend,omitempty"`
+	VMRuntime  string               `json:"vmRuntime,omitempty"`
 	GuestOS    string               `json:"guestOs,omitempty"`
 	Tenancy    TenancyMode          `json:"tenancy,omitempty"`
 	HostPolicy HostPolicy           `json:"hostPolicy,omitempty"`
@@ -193,7 +193,7 @@ type SandboxSpec struct {
 	Tenant     string               `json:"tenant,omitempty"`
 	ClassRef   string               `json:"classRef,omitempty"`
 	Image      string               `json:"image,omitempty"`
-	Backend    string               `json:"backend,omitempty"`
+	VMRuntime  string               `json:"vmRuntime,omitempty"`
 	GuestOS    string               `json:"guestOs,omitempty"`
 	Tenancy    TenancyMode          `json:"tenancy,omitempty"`
 	HostPolicy HostPolicy           `json:"hostPolicy,omitempty"`

@@ -22,7 +22,7 @@ Infra is in early bootstrap. The repository currently contains the initial proje
 
 The first implementation will target:
 
-- Linux and macOS backends from day one
+- Linux and macOS VM runtimes from day one
 - full VMs only
 - provider-backed host acquisition
 - single-active-VM-per-host policies where required, especially for macOS

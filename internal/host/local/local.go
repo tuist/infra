@@ -18,7 +18,7 @@ func (r *Runtime) Capabilities() runtimepkg.Capabilities {
 	return runtimepkg.Capabilities{
 		HostID: r.hostID,
 		Mode:   "local",
-		Backends: []runtimepkg.BackendCapability{
+		VMRuntimes: []runtimepkg.VMRuntimeCapability{
 			{
 				Name:                "local",
 				GuestOSes:           []string{"linux"},
